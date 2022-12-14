@@ -7,29 +7,29 @@ from torch.utils.data import Dataset
 
 def config(data):
     if data == 'bird':
-        train_root = '/data/zhangt/Birds/train'
-        test_root = '/data/zhangt/Birds/test'
-        train_pd = pd.read_csv("/data/zhangt/Birds/bird_train.txt", sep=" ", header=None,
+        train_root = './data/Birds/train'
+        test_root = './data/Birds/test'
+        train_pd = pd.read_csv("./data/bird_train.txt", sep=" ", header=None,
                                names=['ImageName', 'label'])
-        test_pd = pd.read_csv("/data/zhangt/Birds/bird_test.txt", sep=" ", header=None,
+        test_pd = pd.read_csv("./data/bird_test.txt", sep=" ", header=None,
                               names=['ImageName', 'label'])
         cls_num = 200
 
     if data == 'car':
-        train_root = '/data/zhangt/Car/train'
-        test_root = '/data/zhangt/Car/test'
-        train_pd = pd.read_csv("/data/zhangt/Car/car_train.txt", sep=" ", header=None,
+        train_root = './data/Car/train'
+        test_root = './data/Car/test'
+        train_pd = pd.read_csv("./data/car_train.txt", sep=" ", header=None,
                                names=['ImageName', 'label'])
-        test_pd = pd.read_csv("/data/zhangt/Car/car_test.txt", sep=" ", header=None,
+        test_pd = pd.read_csv("./data/car_test.txt", sep=" ", header=None,
                               names=['ImageName', 'label'])
         cls_num = 196
 
     if data == 'aircraft':
-        train_root = '/data/zhangt/Aircraft/train'
-        test_root = '/data/zhangt/Aircraft/test'
-        train_pd = pd.read_csv("/data/zhangt/Aircraft/aircraft_train.txt", sep=" ", header=None,
+        train_root = './data/Aircraft/train'
+        test_root = './data/Aircraft/test'
+        train_pd = pd.read_csv("./data/aircraft_train.txt", sep=" ", header=None,
                                names=['ImageName', 'label'])
-        test_pd = pd.read_csv("/data/zhangt/Aircraft/aircraft_test.txt", sep=" ", header=None,
+        test_pd = pd.read_csv("./data/aircraft_test.txt", sep=" ", header=None,
                               names=['ImageName', 'label'])
         cls_num = 100
 
