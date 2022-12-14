@@ -5,7 +5,7 @@ from utils import *
 
 __all__ = ['ResNet', 'resnet18', 'resnet34', 'resnet50', 'resnet101',
            'resnet152', 'resnext50_32x4d', 'resnext101_32x8d',
-           'wide_resnet50_2', 'wide_resnet101_2']
+           'wide_resnet50_2', 'wide_resnet101_2', 'model_creator']
 
 
 model_urls = {
@@ -36,7 +36,7 @@ class BasicBlock(nn.Module):
     expansion = 1
 
     def __init__(self, inplanes, planes, stride=1, downsample=None, groups=1,
-                 base_width=64, dilation=1, norm_layer=None):
+                 base_width=64, dilation=1, norm_layer=None, use_bp=False):
         super(BasicBlock, self).__init__()
         if norm_layer is None:
             norm_layer = nn.BatchNorm2d
@@ -52,6 +52,9 @@ class BasicBlock(nn.Module):
         self.bn2 = norm_layer(planes)
         self.downsample = downsample
         self.stride = stride
+        self.use_bp = use_bp
+        if self.use_bp:
+            self.bilinear_pooling = Bilinear_Pooling()
 
     def forward(self, x):
         identity = x
@@ -59,9 +62,16 @@ class BasicBlock(nn.Module):
         out = self.conv1(x)
         out = self.bn1(out)
         out = self.relu(out)
+        out1 = out
 
         out = self.conv2(out)
         out = self.bn2(out)
+
+        if self.use_bp:
+            out = self.relu(out)
+            out2 = out[:, :32, :, :]
+            bilinear_features = self.bilinear_pooling(out1, out2)
+            return out1, out2, bilinear_features
 
         if self.downsample is not None:
             identity = self.downsample(x)
@@ -371,4 +381,26 @@ def wide_resnet101_2(pretrained=False, progress=True, **kwargs):
     return _resnet('wide_resnet101_2', Bottleneck, [3, 4, 23, 3],
                    pretrained, progress, **kwargs)
 
+
+def model_creator(model_name):
+    if model_name == 'resnet18':
+        return resnet18(pretrained=True, use_bp=True)
+    elif model_name == 'resnet34':
+        return resnet34(pretrained=True, use_bp=True)
+    elif model_name == 'resnet50':
+        return resnet50(pretrained=True, use_bp=True)
+    elif model_name == 'resnet101':
+        return resnet101(pretrained=True, use_bp=True)
+    elif model_name == 'resnet152':
+        return resnet152(pretrained=True, use_bp=True)
+    elif model_name == 'resnext50_32x4d':
+        return resnext50_32x4d(pretrained=True, use_bp=True)
+    elif model_name == 'resnext101_32x8d':
+        return resnext101_32x8d(pretrained=True, use_bp=True)
+    elif model_name == 'wide_resnet50_2':
+        return wide_resnet50_2(pretrained=True, use_bp=True)
+    elif model_name == 'wide_resnet101_2':
+        return wide_resnet101_2(pretrained=True, use_bp=True)
+    else:
+        return resnet50(pretrained=True, use_bp=True)
 

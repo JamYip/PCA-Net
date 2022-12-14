@@ -78,6 +78,8 @@ def co_att(feature1, feature2):
     return Y
 
 
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+print(device)
 
 
 

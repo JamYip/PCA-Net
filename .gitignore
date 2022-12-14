@@ -1,3 +1,6 @@
 *.tar
 *.jpg
 .idea
+__pycache__
+*checkpoint*
+.DS_Store

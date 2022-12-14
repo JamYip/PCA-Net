@@ -12,9 +12,9 @@ def train(train_loader, model, criterion, optimizer, center):
     for i, data in enumerate(train_loader):
         idx = i
         img, positive_img, label = data
-        input = img.cuda()
-        positive_input = positive_img.cuda()
-        label = torch.Tensor(label).type(torch.int64).cuda()
+        input = img.to(device)
+        positive_input = positive_img.to(device)
+        label = torch.Tensor(label).type(torch.int64).to(device)
 
         out1, attention_maps1, bilinear_features, output1 = model(input)
         erase_img = attention_erase(attention_maps1, input)
@@ -73,8 +73,8 @@ def test(test_loader, model, criterion, center):
     for i, data in enumerate(test_loader):
         idx = i
         img, label = data
-        input = img.cuda()
-        label = label.cuda()
+        input = img.to(device)
+        label = label.to(device)
 
         _, attention_maps, bilinear_features, output1 = model(input)
 

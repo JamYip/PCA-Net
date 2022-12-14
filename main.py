@@ -10,6 +10,9 @@ from utils import *
 from train import train, test
 from model import *
 
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+print(device)
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
 cudnn.benchmark = False
 def init_seeds(seed=0):
@@ -25,7 +28,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='PCA-Net parameters')
     parser.add_argument('--dataset', metavar='DIR', default='bird', help='bird car aircraft')
     parser.add_argument('--lr', '--learning-rate', default=0.001, type=float, metavar='LR', help='initial learning rate')
-    parser.add_argument('--model-name', default='resnet50', type=str, help='model name')
+    parser.add_argument('--model', default='resnet50', type=str, help='model name')
     parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
                         help='manual epoch number (useful on restarts)')
     parser.add_argument('--epochs', default=300, type=int, metavar='N',
@@ -90,20 +93,21 @@ train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=Tru
 test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False, num_workers=4)
 
 
-model = resnet50(pretrained=True, use_bp=True)
+# model = resnet50(pretrained=True, use_bp=True)
+model = model_creator(args.model)
 in_features = model.classifier.in_features
 model.classifier = torch.nn.Linear(in_features=in_features, out_features=cls_num)
 
-model = model.cuda()
+model = model.to(device)
 model = torch.nn.DataParallel(model)
 
 # feature center
 feature_len = 512
 center_dict = {'center': torch.zeros(cls_num, feature_len * 32)}
-center = center_dict['center'].cuda()
+center = center_dict['center'].to(device)
 
 criterion = torch.nn.CrossEntropyLoss()
-criterion = criterion.cuda()
+criterion = criterion.to(device)
 
 optimizer = torch.optim.SGD(
     model.parameters(), lr=args.lr, momentum=0.9, weight_decay=1e-5)
